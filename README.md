@@ -5,10 +5,12 @@ A TypeScript service that bridges MetaWeblog XML-RPC API to Bluesky's AT Protoco
 ## Features
 
 - 🌉 **MetaWeblog API Bridge**: Exposes XML-RPC endpoint compatible with blog clients
-- 🦋 **Bluesky Integration**: Publishes posts to Bluesky via AT Protocol
+- 🦋 **Bluesky Integration**: Publishes posts to Bluesky via AT Protocol  
+- 🧵 **Smart Threading**: Automatically creates threaded posts for long content (>280 chars)
 - 🔐 **Secure Authentication**: Uses Bluesky handle + app password for authentication
-- 📝 **Custom Lexicons**: Support for different post types via lexicon selection
+- 📝 **Content Preservation**: Intelligently combines titles and body text
 - 🚀 **TypeScript**: Fully typed with modern ES modules
+- 🧪 **Well Tested**: Comprehensive test suite with 75%+ code coverage
 
 ## Quick Start
 
@@ -67,22 +69,37 @@ npm run dev
 
 ## Supported Methods
 
-- ✅ `metaWeblog.newPost` - Create new posts
-- ✅ `blogger.getUsersBlogs` - Get user blog info
-- ✅ `blogger.getUserInfo` - Get user information
-- ⚠️ `metaWeblog.editPost` - Not yet supported
-- ⚠️ `metaWeblog.getPost` - Not yet supported
-- ⚠️ `metaWeblog.getRecentPosts` - Not yet supported
+### ✅ Fully Supported
+- `metaWeblog.newPost` - Create new posts (with automatic threading for long content)
+- `blogger.getUsersBlogs` - Get user blog information
+- `blogger.getUserInfo` - Get user profile information
 
-## Lexicons
+### ❌ Not Yet Supported
+- `metaWeblog.editPost` - Edit existing posts (requires post mapping storage)
+- `metaWeblog.getPost` - Retrieve individual posts (requires post mapping storage)  
+- `metaWeblog.getRecentPosts` - Get recent posts list (requires AT Protocol querying)
+- `metaWeblog.deletePost` - Delete posts (requires post mapping storage)
+- `metaWeblog.getCategories` - Get available categories
+- Media upload methods (images, files)
 
-The bridge supports multiple AT Protocol lexicons for different post types:
+## Post Format & Content Handling
 
-- `org.sapphire.topic.post` (default) - Sapphire topic posts
-- `com.example.blog.post` - Standard blog posts
-- `app.bsky.feed.post` - Standard Bluesky posts
+### **Post Types Created**
+All posts are published as **standard Bluesky posts** (`app.bsky.feed.post`) that appear in the normal Bluesky timeline.
 
-Select lexicon by including category tags in your post (e.g., "sapphire", "blog", "longform").
+### **Content Length Handling**
+- **Short posts (≤280 characters)**: Published as single Bluesky post
+- **Long posts (>280 characters)**: Automatically split into threaded posts
+  - Intelligent word-boundary splitting  
+  - Thread indicators added (`1/3`, `2/3`, etc.)
+  - Proper AT Protocol reply chain structure
+  - Title included in first post when possible
+
+### **Content Processing**
+- Title and body are combined intelligently
+- Categories are currently ignored (reserved for future lexicon selection)
+- Keywords and excerpts from MetaWeblog are preserved but not used
+- Markdown formatting is passed through as-is
 
 ## API Endpoints
 
@@ -125,12 +142,15 @@ src/
 
 ## Future Enhancements
 
-- [ ] Support for post editing and deletion
-- [ ] Media upload support (images, videos)
-- [ ] User preferences storage
-- [ ] Rate limiting and monitoring
-- [ ] Docker deployment
-- [ ] Multiple AT Protocol service support
+- [ ] **Post Management**: Support for editing and deleting posts (requires post mapping database)
+- [ ] **Recent Posts**: Implement `getRecentPosts` via AT Protocol queries  
+- [ ] **Media Upload**: Support for images, videos, and file attachments
+- [ ] **Custom Lexicons**: Support for specialized AT Protocol lexicons beyond standard posts
+- [ ] **Categories**: Map MetaWeblog categories to Bluesky hashtags or custom lexicons
+- [ ] **User Preferences**: Store user-specific settings (default formatting, etc.)
+- [ ] **Rate Limiting**: Built-in rate limiting and monitoring
+- [ ] **Docker Deployment**: Containerized deployment options
+- [ ] **Multiple AT Protocol Services**: Support for other AT Protocol implementations
 
 ## Contributing
 
@@ -148,11 +168,17 @@ ISC
 
 ### Common Issues
 
-**Authentication Failed**: Ensure you're using the correct Bluesky handle and app password.
+### Common Issues
 
-**XML-RPC Parse Errors**: Check that your blog client is sending properly formatted XML-RPC requests.
+**Authentication Failed**: Ensure you're using the correct Bluesky handle and app password. The handle should be your full Bluesky handle (e.g., `user.bsky.social`).
 
-**Lexicon Errors**: Verify the lexicon exists and you have permission to create records with it.
+**Long Posts Not Threading**: Check that your content exceeds 280 characters. The service automatically detects and threads long content.
+
+**XML-RPC Parse Errors**: Verify your blog client is sending properly formatted XML-RPC requests. Test with the health endpoint first.
+
+**"Method not implemented" Errors**: Some MetaWeblog methods are not yet supported. See the [Supported Methods](#supported-methods) section above.
+
+**Posts Not Appearing**: Check the Bluesky web interface or app. Posts appear as standard Bluesky posts in your timeline.
 
 ### Debug Mode
 

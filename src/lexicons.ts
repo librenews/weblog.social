@@ -1,8 +1,8 @@
 export const supportedLexicons = {
-  blog: 'app.bsky.feed.post', // Standard Bluesky post
-  sapphire: 'app.bsky.feed.post', // Use standard for now
-  longform: 'app.bsky.feed.post', // Standard feed post
-  default: 'app.bsky.feed.post', // Use standard Bluesky posts as default
+  blog: 'app.bsky.feed.post', 
+  sapphire: 'app.bsky.feed.post', 
+  longform: 'app.bsky.feed.post', 
+  default: 'app.bsky.feed.post', // All posts use standard Bluesky format
 } as const;
 
 export type LexiconKey = keyof typeof supportedLexicons;
@@ -22,14 +22,16 @@ export function getLexiconInfo() {
     supported: Object.keys(supportedLexicons),
     default: supportedLexicons.default,
     descriptions: {
-      blog: 'Standard Bluesky post (280 chars, threads for longer content)',
-      sapphire: 'Standard Bluesky post format',
-      longform: 'Standard Bluesky post with thread support for long content',
+      blog: 'Standard Bluesky post (280 chars max, auto-threads longer content)',
+      sapphire: 'Standard Bluesky post (same as blog)',
+      longform: 'Standard Bluesky post with automatic threading support',
     },
     limits: {
       maxSinglePost: 280,
       threadSupport: true,
-      autoThreading: true
-    }
+      autoThreading: true,
+      lexiconsImplemented: false, // Currently all map to standard posts
+    },
+    note: 'All categories currently map to standard Bluesky posts (app.bsky.feed.post)'
   };
 }
