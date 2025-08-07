@@ -1,4 +1,5 @@
 import { publishToBluesky } from './bluesky-client.js';
+import { getLexiconByCategory } from './lexicons.js';
 
 interface MetaWeblogPost {
   title: string;
@@ -52,7 +53,7 @@ async function handleNewPost(params: any[]) {
   }
 
   // Determine lexicon from categories or use default
-  const lexicon = determineLexicon(post.categories);
+  const lexicon = getLexiconByCategory(post.categories);
 
   const blueskyPost = {
     title: post.title || 'Untitled Post',
@@ -105,26 +106,4 @@ async function handleGetUserInfo(params: any[]) {
     firstname: handle.split('.')[0] || handle,
     url: `https://bsky.social/profile/${handle}`
   };
-}
-
-function determineLexicon(categories?: string[]): string {
-  if (!categories || categories.length === 0) {
-    return 'org.sapphire.topic.post'; // default
-  }
-
-  // Check for lexicon hints in categories
-  const lexiconMap: { [key: string]: string } = {
-    'blog': 'com.example.blog.post',
-    'sapphire': 'org.sapphire.topic.post',
-    'longform': 'com.atproto.repo.strongRef'
-  };
-
-  for (const category of categories) {
-    const normalized = category.toLowerCase();
-    if (lexiconMap[normalized]) {
-      return lexiconMap[normalized];
-    }
-  }
-
-  return 'org.sapphire.topic.post'; // default fallback
 }
