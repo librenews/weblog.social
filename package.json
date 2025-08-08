@@ -23,7 +23,6 @@
   "license": "ISC",
   "engines": {
     "node": "20.x",
-    "npm": "10.x",
     "yarn": "1.x"
   },
   "dependencies": {
