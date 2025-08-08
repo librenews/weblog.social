@@ -19,6 +19,9 @@ coverage/
 .env.test.local
 .env.production.local
 
+# PM2 ecosystem config (contains server-specific details)
+ecosystem.config.cjs
+
 # Runtime logs
 logs/
 *.log

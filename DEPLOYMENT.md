@@ -163,6 +163,154 @@ node dist/index.js
 ## Recommendations by Use Case
 
 - **Personal/Hobby Use**: Render (free tier)
-- **Production/Business**: Railway (best developer experience)
-- **Enterprise**: DigitalOcean App Platform
+- **Production/Business**: Railway (best developer experience) or VPS (most reliable)
+- **Enterprise**: DigitalOcean App Platform or VPS
 - **Minimal Traffic**: Vercel (serverless)
+
+---
+
+## Option 5: VPS/Server Deployment 🖥️
+
+If the managed platforms continue to have issues, deploying to a VPS gives you full control.
+
+### Deployment Tools Options:
+
+#### A) **Manual Deployment** (Simplest)
+```bash
+# SSH into your server and run commands directly
+ssh user@your-server.com
+git clone https://github.com/librenews/weblog.social.git
+cd weblog.social && yarn install && yarn build && yarn start
+```
+
+#### B) **GitHub Actions** (Automated - Recommended)
+Create `.github/workflows/deploy.yml`:
+```yaml
+name: Deploy to VPS
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /opt/weblog.social
+            git pull origin main
+            yarn install
+            yarn build
+            pm2 restart weblog-bridge
+```
+
+#### C) **Docker** (Containerized)
+Create `Dockerfile`:
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json yarn.lock ./
+RUN yarn install --frozen-lockfile
+COPY . .
+RUN yarn build
+EXPOSE 3001
+CMD ["yarn", "start"]
+```
+
+Then deploy:
+```bash
+docker build -t weblog-bridge .
+docker run -d -p 3001:3001 --name weblog-bridge --restart unless-stopped weblog-bridge
+```
+
+#### D) **PM2 Ecosystem** (Recommended for experienced users)
+The project includes `ecosystem.config.example.cjs` for PM2 process management:
+```bash
+# Copy and customize the example config
+cp ecosystem.config.example.cjs ecosystem.config.cjs
+# Edit ecosystem.config.cjs with your server details
+
+# Deploy using PM2 ecosystem
+pm2 start ecosystem.config.cjs --env production
+
+# Or deploy remotely (after configuring host in ecosystem.config.cjs)
+pm2 deploy production setup    # First time only
+pm2 deploy production          # Deploy updates
+```
+
+#### E) **Deployment Scripts** (Custom automation)
+Create `deploy.sh`:
+```bash
+#!/bin/bash
+set -e
+echo "🚀 Deploying weblog.social..."
+git pull origin main
+yarn install
+yarn build
+pm2 restart metaweblog-api || pm2 start ecosystem.config.cjs --env production
+echo "✅ Deployment complete!"
+```
+
+### Steps:
+1. **Get a VPS**: DigitalOcean Droplet ($4/month), Linode ($5/month), or Vultr ($2.50/month)
+2. **Set up Node.js**:
+   ```bash
+   # Ubuntu/Debian
+   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+   sudo apt-get install -y nodejs
+   
+   # Install yarn
+   npm install -g yarn
+   ```
+
+3. **Deploy your app**:
+   ```bash
+   # Clone repo
+   git clone https://github.com/librenews/weblog.social.git
+   cd weblog.social
+   
+   # Install and build
+   yarn install
+   yarn build
+   
+   # Test it works
+   yarn start
+   ```
+
+4. **Set up process manager**:
+   ```bash
+   # Install PM2
+   npm install -g pm2
+   
+   # Start app with PM2 using ecosystem config
+   pm2 start ecosystem.config.cjs --env production
+   pm2 startup
+   pm2 save
+   ```
+
+5. **Set up reverse proxy** (optional):
+   ```bash
+   # Install nginx
+   sudo apt install nginx
+   
+   # Configure nginx to proxy to your app
+   # (port 3001 → port 80/443)
+   ```
+
+### Benefits:
+- ✅ **Full control** over environment
+- ✅ **No platform quirks** or buildpack issues
+- ✅ **Same commands** that work locally
+- ✅ **Cheap** ($2.50-$5/month)
+- ✅ **Reliable** and predictable
+- ✅ **Multiple deployment options** (manual, automated, containerized)
+
+### Recommended Approach:
+1. **Start with manual deployment** to get it working
+2. **Add GitHub Actions** for automated deployments
+3. **Consider Docker** for consistency across environments
