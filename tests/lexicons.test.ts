@@ -1,4 +1,4 @@
-import { getLexiconByCategory, getLexiconInfo, supportedLexicons } from '../src/lexicons';
+import { supportedLexicons, getLexiconByCategory, getLexiconInfo, createWhitewindEntry, isWhitewindLexicon } from '../src/lexicons.js';
 
 describe('Lexicons', () => {
   describe('supportedLexicons', () => {
@@ -70,6 +70,46 @@ describe('Lexicons', () => {
       expect(typeof info.descriptions.blog).toBe('string');
       expect(typeof info.descriptions.sapphire).toBe('string');
       expect(typeof info.descriptions.longform).toBe('string');
+    });
+  });
+
+  describe('Whitewind support', () => {
+    it('should recognize whitewind category', () => {
+      expect(getLexiconByCategory(['whitewind'])).toBe('com.whtwnd.blog.entry');
+    });
+
+    it('should identify whitewind lexicon correctly', () => {
+      expect(isWhitewindLexicon('com.whtwnd.blog.entry')).toBe(true);
+      expect(isWhitewindLexicon('app.bsky.feed.post')).toBe(false);
+    });
+
+    it('should create valid whitewind entry', () => {
+      const title = 'Test Blog Post';
+      const content = 'This is a test blog post content that can be much longer than a regular social media post.';
+      const subtitle = 'A test subtitle';
+
+      const entry = createWhitewindEntry(title, content, subtitle);
+
+      expect(entry.$type).toBe('com.whtwnd.blog.entry');
+      expect(entry.title).toBe(title);
+      expect(entry.content).toBe(content);
+      expect(entry.subtitle).toBe(subtitle);
+      expect(entry.visibility).toBe('public');
+      expect(entry.createdAt).toBeDefined();
+      expect(new Date(entry.createdAt)).toBeInstanceOf(Date);
+    });
+
+    it('should create whitewind entry without subtitle', () => {
+      const title = 'Test Blog Post';
+      const content = 'This is a test blog post content.';
+
+      const entry = createWhitewindEntry(title, content);
+
+      expect(entry.$type).toBe('com.whtwnd.blog.entry');
+      expect(entry.title).toBe(title);
+      expect(entry.content).toBe(content);
+      expect(entry.subtitle).toBeUndefined();
+      expect(entry.visibility).toBe('public');
     });
   });
 });

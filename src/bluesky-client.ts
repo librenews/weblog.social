@@ -1,4 +1,5 @@
 import { BskyAgent } from '@atproto/api';
+import { isWhitewindLexicon, createWhitewindEntry } from './lexicons.js';
 
 interface BlueskyPost {
   title: string;
@@ -36,7 +37,7 @@ export async function publishToBluesky(handle: string, appPassword: string, post
 
       const result = await agent.com.atproto.repo.createRecord({
         repo: agent.session.did,
-        collection: 'app.bsky.feed.post',
+        collection: post.lexicon,
         record,
       });
 
@@ -57,6 +58,11 @@ export async function publishToBluesky(handle: string, appPassword: string, post
 }
 
 function shouldCreateThread(post: BlueskyPost): boolean {
+  // Whitewind entries handle long content natively, no threading needed
+  if (isWhitewindLexicon(post.lexicon)) {
+    return false;
+  }
+  
   const maxLength = 280; // Conservative limit
   const fullText = post.title ? `${post.title}\n\n${post.body}` : post.body;
   return fullText.length > maxLength;
@@ -94,7 +100,7 @@ async function publishAsThread(agent: BskyAgent, post: BlueskyPost, createdAt: s
 
     const result = await agent.com.atproto.repo.createRecord({
       repo: agent.session!.did,
-      collection: 'app.bsky.feed.post',
+      collection: post.lexicon,
       record,
     });
 
@@ -155,6 +161,12 @@ function splitTextIntoThread(text: string, maxLength: number): string[] {
 }
 
 function createRecord(post: BlueskyPost, createdAt: string): any {
+  // Handle Whitewind blog entries
+  if (isWhitewindLexicon(post.lexicon)) {
+    return createWhitewindEntry(post.title, post.body, post.excerpt);
+  }
+
+  // Handle standard Bluesky posts
   const maxLength = 300; // Bluesky character limit
   
   // Handle long content by truncating or splitting
