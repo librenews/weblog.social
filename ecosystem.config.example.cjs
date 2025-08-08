@@ -48,7 +48,7 @@ module.exports = {
       repo: 'https://github.com/librenews/weblog.social.git',
       path: '/opt/weblog.social',      // Replace with your desired deployment path
       'pre-deploy-local': '',
-      'post-deploy': 'yarn install && yarn build && pm2 reload ecosystem.config.js --env production',
+      'post-deploy': '/home/YOUR_USER/.nvm/versions/node/vXX.XX.X/bin/yarn install && NODE_OPTIONS="--max_old_space_size=1024" /home/YOUR_USER/.nvm/versions/node/vXX.XX.X/bin/yarn build && ln -sf /home/YOUR_USER/weblog/shared/ecosystem.config.cjs ./ecosystem.config.cjs && /usr/local/bin/pm2 startOrRestart ecosystem.config.cjs --env production',
       'pre-setup': ''
     }
   }
