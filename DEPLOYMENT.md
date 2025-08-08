@@ -2,42 +2,43 @@
 
 This project is pre-configured for easy deployment to multiple platforms. Choose your preferred option:
 
-## Option 1: Railway (Recommended) ⭐
+## Option 1: Render (Recommended) 🆓
 
-Railway offers the simplest deployment with automatic HTTPS and custom domains.
+Render provides excellent free hosting for Node.js apps and handles builds reliably.
 
 ### Steps:
-1. Push your code to GitHub
-2. Go to [Railway.app](https://railway.app)
-3. Click "Deploy from GitHub repo"
-4. Select this repository
-5. Railway will automatically detect the `railway.json` config and deploy
+1. Push your code to GitHub  
+2. Go to [Render.com](https://render.com)
+3. Click "New +" → "Web Service"
+4. Connect your GitHub repo: `librenews/weblog.social`
+5. Render will automatically detect Node.js and use these settings:
+   - **Build Command**: `npm ci && npm run build`
+   - **Start Command**: `npm start`
+6. Click "Deploy"
 
 ### Features:
-- ✅ Automatic HTTPS
-- ✅ Custom domains available
-- ✅ Built-in monitoring
-- ✅ Auto-scaling
-- ✅ Free tier available ($5/month after)
+- ✅ **Generous free tier** (750 hours/month)
+- ✅ **Automatic HTTPS** and custom domains
+- ✅ **Auto-deploy** on git push
+- ✅ **Reliable builds** with dependency caching
 
 ---
 
-## Option 2: Render (Great Free Option) 🆓
+## Option 2: Railway (Paid Option) 🚂
 
-Render provides excellent free hosting for Node.js apps.
+Railway offers premium hosting with excellent developer experience.
 
 ### Steps:
-1. Push your code to GitHub
-2. Go to [Render.com](https://render.com)
-3. Click "New +" → "Web Service"
-4. Connect your GitHub repo
-5. Render will use the `render.yaml` config automatically
+1. Go to [Railway.app](https://railway.app)
+2. Click "Deploy from GitHub repo"
+3. Select this repository
+4. Railway will auto-detect Node.js and deploy
 
 ### Features:
-- ✅ Generous free tier
-- ✅ Automatic HTTPS
-- ✅ Custom domains
-- ✅ Auto-deploy on git push
+- ✅ Automatic HTTPS and custom domains
+- ✅ Built-in monitoring and logs
+- ✅ Auto-scaling
+- ✅ $5/month after free trial
 
 ---
 
