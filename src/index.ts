@@ -260,7 +260,7 @@ app.get('/', (req, res) => {
 
         <div class="footer">
             <p>Built with ❤️ for the decentralized web</p>
-            <p><a href="/health">Health Check</a> | <a href="https://github.com/mterenzio/weblog.social">Source Code</a></p>
+            <p><a href="/health">Health Check</a> | <a href="https://github.com/librenews/weblog.social">Source Code</a></p>
         </div>
     </div>
 </body>
