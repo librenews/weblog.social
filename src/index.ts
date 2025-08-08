@@ -186,8 +186,8 @@ app.get('/', (req, res) => {
                     <p>Posts are published directly to your Bluesky account via AT Protocol</p>
                 </div>
                 <div class="feature">
-                    <h3>🔄 Two-Way Sync</h3>
-                    <p>Create new posts and retrieve existing ones seamlessly</p>
+                    <h3>� Multiple Formats</h3>
+                    <p>Supports standard posts and Whitewind blog entries with full content</p>
                 </div>
             </div>
         </div>
@@ -211,6 +211,14 @@ app.get('/', (req, res) => {
                     <strong>Blog ID:</strong> <code>1</code> (any value works)<br>
                     <strong>Username:</strong> Your Bluesky handle (e.g., <code>username.bsky.social</code>)<br>
                     <strong>Password:</strong> Your Bluesky app password
+                </div>
+                <div class="warning">
+                    <strong>💡 Post Format:</strong> Use categories to control post format:
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>whitewind</strong> - Creates Whitewind blog entries (full content)</li>
+                        <li><strong>blog, longform</strong> - Standard Bluesky posts (auto-threaded)</li>
+                        <li><strong>No category</strong> - Default Bluesky posts</li>
+                    </ul>
                 </div>
             </div>
 
@@ -247,11 +255,27 @@ app.get('/', (req, res) => {
 
             <h2>🔧 Advanced Features</h2>
             <ul style="margin-left: 30px;">
+                <li><strong>Multiple Lexicons:</strong> Support for Bluesky posts and Whitewind blog entries</li>
                 <li><strong>Thread Creation:</strong> Long posts automatically split into Twitter-style threads</li>
-                <li><strong>Custom Lexicons:</strong> Support for different AT Protocol record types</li>
+                <li><strong>Custom Categories:</strong> Use post categories to control output format</li>
+                <li><strong>Full Content Support:</strong> Whitewind entries support long-form content without truncation</li>
                 <li><strong>Error Handling:</strong> Detailed error messages for troubleshooting</li>
                 <li><strong>Authentication:</strong> Secure app password authentication</li>
             </ul>
+
+            <h2>📝 Supported Post Types</h2>
+            <div class="features">
+                <div class="feature">
+                    <h3>Standard Bluesky Posts</h3>
+                    <p>Default format, 280 chars, auto-threaded for longer content</p>
+                    <code>Categories: blog, longform, sapphire</code>
+                </div>
+                <div class="feature">
+                    <h3>Whitewind Blog Entries</h3>
+                    <p>Long-form blog posts with titles, subtitles, and full content</p>
+                    <code>Category: whitewind</code>
+                </div>
+            </div>
 
             <div class="warning">
                 <strong>🔒 Privacy Note:</strong> This bridge service processes your credentials locally and communicates directly with Bluesky. Your app password is never stored or logged.
