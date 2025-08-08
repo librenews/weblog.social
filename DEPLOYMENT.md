@@ -2,6 +2,14 @@
 
 This project is pre-configured for easy deployment to multiple platforms. Choose your preferred option:
 
+**Package Manager Notes:**
+- **Local development**: Uses yarn for better dependency resolution
+- **Render**: Configured for yarn (best compatibility)  
+- **Railway**: Configured for npm (platform requirement)
+- **Other platforms**: Support both yarn and npm
+
+---
+
 ## Option 1: Render (Recommended) 🆓
 
 Render provides excellent free hosting for Node.js apps and handles builds reliably.
@@ -34,15 +42,15 @@ Railway offers premium hosting with excellent developer experience.
 2. Click "Deploy from GitHub repo"
 3. Select this repository: `librenews/weblog.social`
 4. Railway will auto-detect Node.js and use these settings:
-   - **Build Command**: `yarn install && yarn build` (auto-detected)
-   - **Start Command**: `yarn start` (from railway.json)
+   - **Build Command**: `npm install && npm run build` (auto-detected)
+   - **Start Command**: `npm start` (from railway.json)
 5. Click "Deploy"
 
 ### Features:
 - ✅ **Automatic HTTPS** and custom domains
 - ✅ **Built-in monitoring** and comprehensive logs
 - ✅ **Auto-scaling** based on traffic
-- ✅ **Yarn support** with dependency caching
+- ✅ **npm compatibility** with dependency caching
 - ✅ **$5/month** after free trial ($5 credit included)
 
 ---
@@ -114,9 +122,9 @@ If you encounter build failures on deployment platforms:
    - **Start Command**: `yarn start`  
    - **Node Version**: 20.x (in Environment settings)
 
-2. **Manual Railway Configuration**: If Railway has issues, go to Settings → Deploy:
-   - **Build Command**: `yarn install && yarn build`
-   - **Start Command**: `yarn start`
+2. **Manual Railway Configuration**: Railway works best with npm. Go to Settings → Deploy:
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
    - **Node Version**: 18.x or 20.x (in Variables)
 
 3. **Fallback to npm if yarn fails**: Only if yarn is unavailable on the platform:
