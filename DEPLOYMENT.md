@@ -32,14 +32,18 @@ Railway offers premium hosting with excellent developer experience.
 ### Steps:
 1. Go to [Railway.app](https://railway.app)
 2. Click "Deploy from GitHub repo"
-3. Select this repository
-4. Railway will auto-detect Node.js and deploy
+3. Select this repository: `librenews/weblog.social`
+4. Railway will auto-detect Node.js and use these settings:
+   - **Build Command**: `yarn install && yarn build` (auto-detected)
+   - **Start Command**: `yarn start` (from railway.json)
+5. Click "Deploy"
 
 ### Features:
-- ✅ Automatic HTTPS and custom domains
-- ✅ Built-in monitoring and logs
-- ✅ Auto-scaling
-- ✅ $5/month after free trial
+- ✅ **Automatic HTTPS** and custom domains
+- ✅ **Built-in monitoring** and comprehensive logs
+- ✅ **Auto-scaling** based on traffic
+- ✅ **Yarn support** with dependency caching
+- ✅ **$5/month** after free trial ($5 credit included)
 
 ---
 
@@ -110,14 +114,19 @@ If you encounter build failures on deployment platforms:
    - **Start Command**: `yarn start`  
    - **Node Version**: 20.x (in Environment settings)
 
-2. **Fallback to npm if yarn fails**: Only if yarn is unavailable on the platform:
+2. **Manual Railway Configuration**: If Railway has issues, go to Settings → Deploy:
+   - **Build Command**: `yarn install && yarn build`
+   - **Start Command**: `yarn start`
+   - **Node Version**: 18.x or 20.x (in Variables)
+
+3. **Fallback to npm if yarn fails**: Only if yarn is unavailable on the platform:
    ```bash
    # Fallback build command:
    npm install && npm run build
    ```
 
-3. **Check Node.js version**: Ensure the platform uses Node.js 18+
-4. **Verify dependencies**: Make sure both `dependencies` and `devDependencies` are properly installed
+4. **Check Node.js version**: Ensure the platform uses Node.js 18+
+5. **Verify dependencies**: Make sure both `dependencies` and `devDependencies` are properly installed
 
 ### Local Build Testing
 Test your build locally before deploying:
