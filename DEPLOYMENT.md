@@ -105,7 +105,12 @@ All deployments include a health check endpoint at `/health` that platforms use 
 ### Build Failures
 If you encounter build failures on deployment platforms:
 
-1. **Try yarn instead of npm**: Yarn often has better dependency resolution
+1. **Manual Render Configuration**: If Render auto-detects incorrectly, manually set:
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   - **Node Version**: 20.x (in Environment settings)
+
+2. **Try yarn instead of npm**: Yarn often has better dependency resolution
    ```bash
    # In your build command, use:
    yarn install && yarn build
@@ -113,9 +118,9 @@ If you encounter build failures on deployment platforms:
    npm ci && npm run build
    ```
 
-2. **Check Node.js version**: Ensure the platform uses Node.js 18+
-3. **Verify dependencies**: Make sure both `dependencies` and `devDependencies` are properly installed
-4. **Use npm install instead of npm ci**: If `package-lock.json` has issues, use:
+3. **Check Node.js version**: Ensure the platform uses Node.js 18+
+4. **Verify dependencies**: Make sure both `dependencies` and `devDependencies` are properly installed
+5. **Use npm install instead of npm ci**: If `package-lock.json` has issues, use:
    ```bash
    npm install && npm run build
    ```

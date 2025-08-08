@@ -21,6 +21,10 @@
   ],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
   "dependencies": {
     "@atproto/api": "^0.16.2",
     "body-parser": "^2.2.0",
