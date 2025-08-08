@@ -12,8 +12,8 @@ Render provides excellent free hosting for Node.js apps and handles builds relia
 3. Click "New +" → "Web Service"
 4. Connect your GitHub repo: `librenews/weblog.social`
 5. Render will automatically detect Node.js and use these settings:
-   - **Build Command**: `npm ci && npm run build`
-   - **Start Command**: `npm start`
+   - **Build Command**: `yarn install && yarn build` (or `npm ci && npm run build`)
+   - **Start Command**: `yarn start` (or `npm start`)
 6. Click "Deploy"
 
 ### Features:
@@ -21,6 +21,7 @@ Render provides excellent free hosting for Node.js apps and handles builds relia
 - ✅ **Automatic HTTPS** and custom domains
 - ✅ **Auto-deploy** on git push
 - ✅ **Reliable builds** with dependency caching
+- ✅ **Yarn support** for better dependency resolution
 
 ---
 
@@ -47,9 +48,14 @@ Railway offers premium hosting with excellent developer experience.
 Good for low-traffic usage with serverless functions.
 
 ### Steps:
-1. Install Vercel CLI: `npm i -g vercel`
+1. Install Vercel CLI: `npm i -g vercel` (or `yarn global add vercel`)
 2. Run `vercel` in your project directory
 3. Follow the prompts
+
+### Build Configuration:
+Vercel will automatically detect the build setup. If needed, you can specify:
+- **Build Command**: `yarn build` or `npm run build`
+- **Output Directory**: `dist`
 
 ### Note:
 Serverless functions have cold starts, so the first request might be slower.
@@ -91,6 +97,41 @@ After deployment, you can add a custom domain:
 ## Health Check
 
 All deployments include a health check endpoint at `/health` that platforms use to monitor your service.
+
+---
+
+## Troubleshooting Deployments
+
+### Build Failures
+If you encounter build failures on deployment platforms:
+
+1. **Try yarn instead of npm**: Yarn often has better dependency resolution
+   ```bash
+   # In your build command, use:
+   yarn install && yarn build
+   # Instead of:
+   npm ci && npm run build
+   ```
+
+2. **Check Node.js version**: Ensure the platform uses Node.js 18+
+3. **Verify dependencies**: Make sure both `dependencies` and `devDependencies` are properly installed
+4. **Use npm install instead of npm ci**: If `package-lock.json` has issues, use:
+   ```bash
+   npm install && npm run build
+   ```
+
+### Local Build Testing
+Test your build locally before deploying:
+```bash
+# Install dependencies
+yarn install  # or npm install
+
+# Build the project
+yarn build    # or npm run build
+
+# Test the production build
+node dist/index.js
+```
 
 ---
 

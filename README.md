@@ -17,37 +17,56 @@ A TypeScript service that bridges MetaWeblog XML-RPC API to Bluesky's AT Protoco
 ### Prerequisites
 
 - Node.js 18+ 
-- npm or yarn
+- npm or yarn (yarn recommended for better dependency resolution)
 - Bluesky account with app password
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
-cd metaweblog-bluesky-bridge
+git clone https://github.com/librenews/weblog.social.git
+cd weblog.social
 ```
 
 2. Install dependencies:
 ```bash
+# Using yarn (recommended)
+yarn install
+
+# Or using npm
 npm install
 ```
 
 3. Build the project:
 ```bash
+# Using yarn
+yarn build
+
+# Or using npm
 npm run build
 ```
 
 4. Start the server:
 ```bash
+# Using yarn
+yarn start
+
+# Or using npm
 npm start
 ```
 
-The service will be available at `http://localhost:3000/xmlrpc`
+The service will be available at `http://localhost:3001/xmlrpc`
 
 ### Development
 
 For development with hot reload:
+```bash
+# Using yarn
+yarn dev
+
+# Or using npm
+npm run dev
+```
 ```bash
 npm run dev
 ```
@@ -56,7 +75,7 @@ npm run dev
 
 ### Blog Client Setup (MarsEdit, Open Live Writer, etc.)
 
-- **Endpoint**: `http://localhost:3000/xmlrpc`
+- **Endpoint**: `http://localhost:3001/xmlrpc`
 - **Username**: Your Bluesky handle (e.g., `user.bsky.social`)
 - **Password**: Your Bluesky app password
 - **Blog ID**: `1` (or any value)
@@ -71,12 +90,12 @@ npm run dev
 
 ### ✅ Fully Supported
 - `metaWeblog.newPost` - Create new posts (with automatic threading for long content)
+- `metaWeblog.getPost` - Retrieve individual posts from Bluesky via AT Protocol
 - `blogger.getUsersBlogs` - Get user blog information
 - `blogger.getUserInfo` - Get user profile information
 
 ### ❌ Not Yet Supported
 - `metaWeblog.editPost` - Edit existing posts (requires post mapping storage)
-- `metaWeblog.getPost` - Retrieve individual posts (requires post mapping storage)  
 - `metaWeblog.getRecentPosts` - Get recent posts list (requires AT Protocol querying)
 - `metaWeblog.deletePost` - Delete posts (requires post mapping storage)
 - `metaWeblog.getCategories` - Get available categories
@@ -131,14 +150,14 @@ src/
 
 ### Scripts
 
-- `npm run build` - Compile TypeScript to JavaScript
-- `npm run start` - Start the compiled server
-- `npm run dev` - Development with hot reload
-- `npm test` - Run tests (not implemented yet)
+- `yarn build` / `npm run build` - Compile TypeScript to JavaScript
+- `yarn start` / `npm run start` - Start the compiled server
+- `yarn dev` / `npm run dev` - Development with hot reload
+- `yarn test` / `npm test` - Run tests with Jest (37 tests passing)
 
 ### Environment Variables
 
-- `PORT` - Server port (default: 3000)
+- `PORT` - Server port (default: 3001)
 
 ## Future Enhancements
 
