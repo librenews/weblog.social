@@ -1,5 +1,6 @@
 import { publishToBluesky } from './bluesky-client.js';
 import { getLexiconByCategory } from './lexicons.js';
+import { BskyAgent } from '@atproto/api';
 
 interface MetaWeblogPost {
   title: string;
@@ -75,9 +76,39 @@ async function handleEditPost(params: any[]) {
 }
 
 async function handleGetPost(params: any[]) {
-  // For now, getting individual posts is not supported
-  // This would require storing post mappings
-  throw new Error('Getting individual posts is not yet supported');
+  const [postId, handle, appPassword] = params as [string, string, string];
+
+  if (!postId || !handle || !appPassword) {
+    throw new Error('Post ID, handle, and app password are required');
+  }
+
+  try {
+    const agent = new BskyAgent({ service: 'https://bsky.social' });
+    await agent.login({ identifier: handle, password: appPassword });
+
+    if (!agent.session?.did) {
+      throw new Error('Failed to authenticate with Bluesky');
+    }
+
+    const response = await agent.com.atproto.repo.getRecord({
+      repo: agent.session.did,
+      collection: 'app.bsky.feed.post',
+      rkey: postId.split('/').pop()!, // Extract record key from the post URL
+    });
+
+    // The AT Protocol response structure has the record data in response.data.value
+    const record = response.data.value as any;
+
+    return {
+      title: record.title || 'Untitled Post',
+      description: record.text || '',
+      dateCreated: record.createdAt || new Date().toISOString(),
+      categories: record.tags || [],
+    };
+  } catch (error) {
+    console.error('Failed to retrieve post from Bluesky:', error);
+    throw new Error('Failed to retrieve post');
+  }
 }
 
 async function handleGetRecentPosts(params: any[]) {

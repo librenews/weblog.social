@@ -5,6 +5,23 @@ import * as blueskyClient from '../src/bluesky-client';
 jest.mock('../src/bluesky-client');
 const mockPublishToBluesky = jest.mocked(blueskyClient.publishToBluesky);
 
+// Mock the @atproto/api module for getPost testing
+jest.mock('@atproto/api', () => ({
+  BskyAgent: jest.fn().mockImplementation(() => ({
+    login: jest.fn(),
+    session: { did: 'did:plc:test123' },
+    com: {
+      atproto: {
+        repo: {
+          getRecord: jest.fn()
+        }
+      }
+    }
+  }))
+}));
+
+import { BskyAgent } from '@atproto/api';
+
 describe('XML-RPC Handler', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -142,6 +159,51 @@ describe('XML-RPC Handler', () => {
       });
     });
 
+    describe('metaWeblog.getPost', () => {
+      it('should retrieve a post successfully', async () => {
+        const mockBskyAgent = jest.mocked(BskyAgent);
+        const mockAgent = {
+          login: jest.fn().mockResolvedValue(undefined),
+          session: { did: 'did:plc:test123' },
+          com: {
+            atproto: {
+              repo: {
+                getRecord: jest.fn().mockResolvedValue({
+                  data: {
+                    value: {
+                      text: 'Test post content',
+                      createdAt: '2023-08-07T10:00:00.000Z'
+                    }
+                  }
+                })
+              }
+            }
+          }
+        };
+        mockBskyAgent.mockImplementation(() => mockAgent as any);
+
+        const params = ['at://did:plc:test/app.bsky.feed.post/123', 'test.bsky.social', 'app-password'];
+        
+        const result = await handleMetaWeblogCall('metaWeblog.getPost', params);
+        
+        expect(result).toEqual({
+          title: 'Untitled Post',
+          description: 'Test post content',
+          dateCreated: '2023-08-07T10:00:00.000Z',
+          categories: []
+        });
+        expect(mockAgent.login).toHaveBeenCalledWith({
+          identifier: 'test.bsky.social',
+          password: 'app-password'
+        });
+        expect(mockAgent.com.atproto.repo.getRecord).toHaveBeenCalledWith({
+          repo: 'did:plc:test123',
+          collection: 'app.bsky.feed.post',
+          rkey: '123'
+        });
+      });
+    });
+
     describe('blogger.getUsersBlogs', () => {
       it('should return user blog information', async () => {
         const result = await handleMetaWeblogCall('blogger.getUsersBlogs', []);
@@ -186,9 +248,9 @@ describe('XML-RPC Handler', () => {
           .rejects.toThrow('Post editing is not yet supported');
       });
 
-      it('should throw error for getPost', async () => {
+      it('should throw error for getPost with missing parameters', async () => {
         await expect(handleMetaWeblogCall('metaWeblog.getPost', []))
-          .rejects.toThrow('Getting individual posts is not yet supported');
+          .rejects.toThrow('Post ID, handle, and app password are required');
       });
 
       it('should throw error for getRecentPosts', async () => {
