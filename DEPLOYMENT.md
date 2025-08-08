@@ -12,8 +12,8 @@ Render provides excellent free hosting for Node.js apps and handles builds relia
 3. Click "New +" → "Web Service"
 4. Connect your GitHub repo: `librenews/weblog.social`
 5. Render will automatically detect Node.js and use these settings:
-   - **Build Command**: `yarn install && yarn build` (or `npm ci && npm run build`)
-   - **Start Command**: `yarn start` (or `npm start`)
+   - **Build Command**: `yarn install && yarn build`  
+   - **Start Command**: `yarn start`
 6. Click "Deploy"
 
 ### Features:
@@ -106,24 +106,18 @@ All deployments include a health check endpoint at `/health` that platforms use 
 If you encounter build failures on deployment platforms:
 
 1. **Manual Render Configuration**: If Render auto-detects incorrectly, manually set:
-   - **Build Command**: `npm install && npm run build`
-   - **Start Command**: `npm start`
+   - **Build Command**: `yarn install && yarn build`
+   - **Start Command**: `yarn start`  
    - **Node Version**: 20.x (in Environment settings)
 
-2. **Try yarn instead of npm**: Yarn often has better dependency resolution
+2. **Fallback to npm if yarn fails**: Only if yarn is unavailable on the platform:
    ```bash
-   # In your build command, use:
-   yarn install && yarn build
-   # Instead of:
-   npm ci && npm run build
+   # Fallback build command:
+   npm install && npm run build
    ```
 
 3. **Check Node.js version**: Ensure the platform uses Node.js 18+
 4. **Verify dependencies**: Make sure both `dependencies` and `devDependencies` are properly installed
-5. **Use npm install instead of npm ci**: If `package-lock.json` has issues, use:
-   ```bash
-   npm install && npm run build
-   ```
 
 ### Local Build Testing
 Test your build locally before deploying:
