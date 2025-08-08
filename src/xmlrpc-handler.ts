@@ -1,5 +1,5 @@
 import { publishToBluesky } from './bluesky-client.js';
-import { getLexiconByCategory } from './lexicons.js';
+import { getLexiconByCategory, getLexiconFromPost } from './lexicons.js';
 import { BskyAgent } from '@atproto/api';
 
 interface MetaWeblogPost {
@@ -9,6 +9,12 @@ interface MetaWeblogPost {
   dateCreated?: Date;
   mt_keywords?: string;
   mt_excerpt?: string;
+  custom_fields?: Array<{
+    key: string;
+    value: string;
+  }>;
+  // Support direct lexicon field (some clients)
+  lexicon?: string;
 }
 
 export async function handleMetaWeblogCall(methodName: string, params: any[]) {
@@ -53,8 +59,17 @@ async function handleNewPost(params: any[]) {
     throw new Error('Post must have either title or description');
   }
 
-  // Determine lexicon from categories or use default
-  const lexicon = getLexiconByCategory(post.categories);
+  // Extract lexicon from custom fields or direct parameter
+  let lexiconParam = post.lexicon;
+  if (!lexiconParam && post.custom_fields) {
+    const lexiconField = post.custom_fields.find(field => 
+      field.key.toLowerCase() === 'lexicon'
+    );
+    lexiconParam = lexiconField?.value;
+  }
+
+  // Determine lexicon from custom field, categories, or use default
+  const lexicon = getLexiconFromPost(lexiconParam, post.categories);
 
   const blueskyPost = {
     title: post.title || 'Untitled Post',

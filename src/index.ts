@@ -213,12 +213,13 @@ app.get('/', (req, res) => {
                     <strong>Password:</strong> Your Bluesky app password
                 </div>
                 <div class="warning">
-                    <strong>💡 Post Format:</strong> Use categories to control post format:
+                    <strong>💡 Post Format:</strong> Use a custom field to control post format:
                     <ul style="margin-left: 20px; margin-top: 10px;">
-                        <li><strong>whitewind</strong> - Creates Whitewind blog entries (full content)</li>
-                        <li><strong>blog, longform</strong> - Standard Bluesky posts (auto-threaded)</li>
-                        <li><strong>No category</strong> - Default Bluesky posts</li>
+                        <li><strong>Custom Field:</strong> <code>lexicon = whitewind</code> - Creates Whitewind blog entries</li>
+                        <li><strong>Custom Field:</strong> <code>lexicon = blog</code> - Standard Bluesky posts (auto-threaded)</li>
+                        <li><strong>No custom field</strong> - Default Bluesky posts</li>
                     </ul>
+                    <p style="margin-top: 10px;"><em>In MarsEdit: Blog Settings > Custom Fields > Add "lexicon"</em></p>
                 </div>
             </div>
 
@@ -255,9 +256,9 @@ app.get('/', (req, res) => {
 
             <h2>🔧 Advanced Features</h2>
             <ul style="margin-left: 30px;">
+                <li><strong>Custom Field Support:</strong> Use <code>lexicon</code> custom field to control post format</li>
                 <li><strong>Multiple Lexicons:</strong> Support for Bluesky posts and Whitewind blog entries</li>
                 <li><strong>Thread Creation:</strong> Long posts automatically split into Twitter-style threads</li>
-                <li><strong>Custom Categories:</strong> Use post categories to control output format</li>
                 <li><strong>Full Content Support:</strong> Whitewind entries support long-form content without truncation</li>
                 <li><strong>Error Handling:</strong> Detailed error messages for troubleshooting</li>
                 <li><strong>Authentication:</strong> Secure app password authentication</li>
@@ -268,12 +269,12 @@ app.get('/', (req, res) => {
                 <div class="feature">
                     <h3>Standard Bluesky Posts</h3>
                     <p>Default format, 280 chars, auto-threaded for longer content</p>
-                    <code>Categories: blog, longform, sapphire</code>
+                    <code>lexicon = blog (or no custom field)</code>
                 </div>
                 <div class="feature">
                     <h3>Whitewind Blog Entries</h3>
                     <p>Long-form blog posts with titles, subtitles, and full content</p>
-                    <code>Category: whitewind</code>
+                    <code>lexicon = whitewind</code>
                 </div>
             </div>
 

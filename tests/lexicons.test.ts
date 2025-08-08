@@ -1,4 +1,4 @@
-import { supportedLexicons, getLexiconByCategory, getLexiconInfo, createWhitewindEntry, isWhitewindLexicon } from '../src/lexicons.js';
+import { supportedLexicons, getLexiconByCategory, getLexiconInfo, createWhitewindEntry, isWhitewindLexicon, getLexiconFromPost } from '../src/lexicons.js';
 
 describe('Lexicons', () => {
   describe('supportedLexicons', () => {
@@ -110,6 +110,34 @@ describe('Lexicons', () => {
       expect(entry.content).toBe(content);
       expect(entry.subtitle).toBeUndefined();
       expect(entry.visibility).toBe('public');
+    });
+  });
+
+  describe('getLexiconFromPost', () => {
+    it('should prefer lexicon parameter over categories', () => {
+      expect(getLexiconFromPost('whitewind', ['blog'])).toBe('com.whtwnd.blog.entry');
+      expect(getLexiconFromPost('blog', ['whitewind'])).toBe('app.bsky.feed.post');
+    });
+
+    it('should fallback to categories when no lexicon parameter', () => {
+      expect(getLexiconFromPost(undefined, ['whitewind'])).toBe('com.whtwnd.blog.entry');
+      expect(getLexiconFromPost(undefined, ['blog'])).toBe('app.bsky.feed.post');
+    });
+
+    it('should return default when neither lexicon nor categories match', () => {
+      expect(getLexiconFromPost('unknown', ['unknown'])).toBe('app.bsky.feed.post');
+      expect(getLexiconFromPost(undefined, [])).toBe('app.bsky.feed.post');
+    });
+
+    it('should handle full collection names in lexicon parameter', () => {
+      expect(getLexiconFromPost('com.whtwnd.blog.entry')).toBe('com.whtwnd.blog.entry');
+      expect(getLexiconFromPost('app.bsky.feed.post')).toBe('app.bsky.feed.post');
+      expect(getLexiconFromPost('com.example.custom')).toBe('com.example.custom');
+    });
+
+    it('should be case insensitive for known lexicons', () => {
+      expect(getLexiconFromPost('WHITEWIND')).toBe('com.whtwnd.blog.entry');
+      expect(getLexiconFromPost('Blog')).toBe('app.bsky.feed.post');
     });
   });
 });

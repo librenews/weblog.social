@@ -18,6 +18,24 @@ export function getLexiconByCategory(categories: string[] = []): string {
   return supportedLexicons.default;
 }
 
+// New function to get lexicon from custom field or direct parameter
+export function getLexiconFromPost(lexiconParam?: string, categories: string[] = []): string {
+  // First check direct lexicon parameter
+  if (lexiconParam) {
+    const normalized = lexiconParam.toLowerCase() as LexiconKey;
+    if (supportedLexicons[normalized]) {
+      return supportedLexicons[normalized];
+    }
+    // If lexicon param is a full collection name, return it directly
+    if (lexiconParam.includes('.')) {
+      return lexiconParam;
+    }
+  }
+  
+  // Fallback to category-based detection for backward compatibility
+  return getLexiconByCategory(categories);
+}
+
 export function getLexiconInfo() {
   return {
     supported: Object.keys(supportedLexicons),
