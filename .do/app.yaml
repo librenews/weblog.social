@@ -1,0 +1,19 @@
+name: weblog-social-bridge
+services:
+- name: weblog-bridge
+  source_dir: /
+  github:
+    repo: librenews/weblog.social
+    branch: main
+  run_command: yarn start
+  build_command: yarn install && yarn build
+  environment_slug: node-js
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  routes:
+  - path: /
+  health_check:
+    http_path: /health
+  envs:
+  - key: NODE_ENV
+    value: production

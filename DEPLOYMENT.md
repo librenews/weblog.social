@@ -76,12 +76,26 @@ Serverless functions have cold starts, so the first request might be slower.
 
 ## Option 4: DigitalOcean App Platform 🌊
 
+DigitalOcean App Platform offers reliable hosting with good Node.js support.
+
 ### Steps:
-1. Push to GitHub
-2. Go to DigitalOcean → Apps
-3. Create new app from GitHub
-4. Select this repository
-5. DigitalOcean will auto-detect Node.js
+1. Push your code to GitHub (ensure latest changes are pushed)
+2. Go to [DigitalOcean Cloud](https://cloud.digitalocean.com/apps)
+3. Click "Create App"
+4. Choose "GitHub" as source
+5. Select repository: `librenews/weblog.social`
+6. DigitalOcean will auto-detect Node.js and use these settings:
+   - **Build Command**: `yarn install && yarn build` (from .do/app.yaml)
+   - **Run Command**: `yarn start` (from .do/app.yaml)
+   - **Instance Size**: Basic ($5/month)
+7. Review and click "Create Resources"
+
+### Features:
+- ✅ **Reliable builds** with good Node.js support
+- ✅ **Automatic HTTPS** and custom domains
+- ✅ **Built-in monitoring** and logs
+- ✅ **Predictable pricing** ($5/month Basic)
+- ✅ **Good documentation** and support
 
 ---
 
@@ -127,7 +141,12 @@ If you encounter build failures on deployment platforms:
    - **Start Command**: `npm start`
    - **Node Version**: 18.x or 20.x (in Variables)
 
-3. **Fallback to npm if yarn fails**: Only if yarn is unavailable on the platform:
+3. **Manual DigitalOcean Configuration**: If needed, go to App Settings → Components:
+   - **Build Command**: `yarn install && yarn build`
+   - **Run Command**: `yarn start`
+   - **Node Version**: 18.x or 20.x
+
+4. **Fallback to npm if yarn fails**: Only if yarn is unavailable on the platform:
    ```bash
    # Fallback build command:
    npm install && npm run build
