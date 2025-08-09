@@ -43,9 +43,6 @@ export async function handleMetaWeblogCall(methodName: string, params: any[]) {
 }
 
 async function handleNewPost(params: any[]) {
-  console.log('=== RAW POST DATA DEBUG ===');
-  console.log('All params:', JSON.stringify(params, null, 2));
-  
   const [blogId, handle, appPassword, post, publish] = params as [
     string,
     string,
@@ -53,10 +50,6 @@ async function handleNewPost(params: any[]) {
     any,
     boolean
   ];
-
-  console.log('=== PARSED PARAMETERS ===');
-  console.log('Post object keys:', Object.keys(post || {}));
-  console.log('Full post object:', JSON.stringify(post, null, 2));
 
   if (!handle || !appPassword) {
     throw new Error('Handle and app password are required');
@@ -68,20 +61,15 @@ async function handleNewPost(params: any[]) {
 
   // Extract lexicon from custom fields or direct parameter
   let lexiconParam = post.lexicon;
-  console.log('DEBUG: Direct lexicon param:', lexiconParam);
-  console.log('DEBUG: Post custom_fields:', JSON.stringify(post.custom_fields, null, 2));
-  
   if (!lexiconParam && post.custom_fields) {
     const lexiconField = post.custom_fields.find((field: any) => 
       field.key.toLowerCase() === 'lexicon'
     );
     lexiconParam = lexiconField?.value;
-    console.log('DEBUG: Found lexicon in custom fields:', lexiconParam);
   }
 
   // Determine lexicon from custom field, categories, or use default
   const lexicon = getLexiconFromPost(lexiconParam, post.categories);
-  console.log('DEBUG: Final detected lexicon:', lexicon);
   
   try {
 
@@ -123,21 +111,50 @@ async function handleGetPost(params: any[]) {
       throw new Error('Failed to authenticate with Bluesky');
     }
 
+    // Extract collection and record key from the post URI
+    const postUri = postId;
+    const uriParts = postUri.split('/');
+    
+    if (uriParts.length < 2) {
+      throw new Error('Invalid post URI format');
+    }
+    
+    const collection = uriParts[uriParts.length - 2]; // e.g., "app.bsky.feed.post" or "com.whtwnd.blog.entry"
+    const rkey = uriParts[uriParts.length - 1]; // The record key
+
+    if (!collection || !rkey) {
+      throw new Error('Could not extract collection and record key from URI');
+    }
+
+    console.log('Retrieving post from collection:', collection, 'with key:', rkey);
+
     const response = await agent.com.atproto.repo.getRecord({
       repo: agent.session.did,
-      collection: 'app.bsky.feed.post',
-      rkey: postId.split('/').pop()!, // Extract record key from the post URL
+      collection: collection,
+      rkey: rkey,
     });
 
     // The AT Protocol response structure has the record data in response.data.value
     const record = response.data.value as any;
 
-    return {
-      title: record.title || 'Untitled Post',
-      description: record.text || '',
-      dateCreated: record.createdAt || new Date().toISOString(),
-      categories: record.tags || [],
-    };
+    // Handle different record types
+    if (collection === 'com.whtwnd.blog.entry') {
+      // Whitewind blog entry
+      return {
+        title: record.title || 'Untitled Post',
+        description: record.content || '',
+        dateCreated: record.createdAt || new Date().toISOString(),
+        categories: [],
+      };
+    } else {
+      // Standard Bluesky post
+      return {
+        title: record.title || 'Untitled Post',
+        description: record.text || '',
+        dateCreated: record.createdAt || new Date().toISOString(),
+        categories: record.tags || [],
+      };
+    }
   } catch (error) {
     console.error('Failed to retrieve post from Bluesky:', error);
     throw new Error('Failed to retrieve post');
