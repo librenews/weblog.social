@@ -61,15 +61,20 @@ async function handleNewPost(params: any[]) {
 
   // Extract lexicon from custom fields or direct parameter
   let lexiconParam = post.lexicon;
+  console.log('DEBUG: Direct lexicon param:', lexiconParam);
+  console.log('DEBUG: Post custom_fields:', JSON.stringify(post.custom_fields, null, 2));
+  
   if (!lexiconParam && post.custom_fields) {
     const lexiconField = post.custom_fields.find(field => 
       field.key.toLowerCase() === 'lexicon'
     );
     lexiconParam = lexiconField?.value;
+    console.log('DEBUG: Found lexicon in custom fields:', lexiconParam);
   }
 
   // Determine lexicon from custom field, categories, or use default
   const lexicon = getLexiconFromPost(lexiconParam, post.categories);
+  console.log('DEBUG: Final detected lexicon:', lexicon);
   
   try {
 
