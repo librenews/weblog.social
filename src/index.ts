@@ -207,7 +207,7 @@ app.get('/', (req, res) => {
                 <h3>Step 2: Configure Your Blog Editor</h3>
                 <p>Add a new blog account in your MetaWeblog-compatible editor with these settings:</p>
                 <div class="endpoint">
-                    <strong>XML-RPC Endpoint:</strong> <code>${req.protocol}://${req.get('host')}/xmlrpc</code><br>
+                    <strong>XML-RPC Endpoint:</strong> <code>https://weblog.social/xmlrpc</code><br>
                     <strong>Blog ID:</strong> <code>1</code> (any value works)<br>
                     <strong>Username:</strong> Your Bluesky handle (e.g., <code>username.bsky.social</code>)<br>
                     <strong>Password:</strong> Your Bluesky app password
@@ -285,7 +285,7 @@ app.get('/', (req, res) => {
 
         <div class="footer">
             <p>Built with ❤️ for the decentralized web</p>
-            <p><a href="/health">Health Check</a> | <a href="https://github.com/librenews/weblog.social">Source Code</a></p>
+            <p><a href="https://weblog.social/health">Health Check</a> | <a href="https://github.com/librenews/weblog.social">Source Code</a></p>
         </div>
     </div>
 </body>
