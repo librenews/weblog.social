@@ -43,13 +43,20 @@ export async function handleMetaWeblogCall(methodName: string, params: any[]) {
 }
 
 async function handleNewPost(params: any[]) {
+  console.log('=== RAW POST DATA DEBUG ===');
+  console.log('All params:', JSON.stringify(params, null, 2));
+  
   const [blogId, handle, appPassword, post, publish] = params as [
     string,
     string,
     string,
-    MetaWeblogPost,
+    any,
     boolean
   ];
+
+  console.log('=== PARSED PARAMETERS ===');
+  console.log('Post object keys:', Object.keys(post || {}));
+  console.log('Full post object:', JSON.stringify(post, null, 2));
 
   if (!handle || !appPassword) {
     throw new Error('Handle and app password are required');
@@ -65,7 +72,7 @@ async function handleNewPost(params: any[]) {
   console.log('DEBUG: Post custom_fields:', JSON.stringify(post.custom_fields, null, 2));
   
   if (!lexiconParam && post.custom_fields) {
-    const lexiconField = post.custom_fields.find(field => 
+    const lexiconField = post.custom_fields.find((field: any) => 
       field.key.toLowerCase() === 'lexicon'
     );
     lexiconParam = lexiconField?.value;
