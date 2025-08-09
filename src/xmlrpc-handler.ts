@@ -59,15 +59,6 @@ async function handleNewPost(params: any[]) {
     throw new Error('Post must have either title or description');
   }
 
-  console.log('Received post data:', JSON.stringify({
-    title: post.title,
-    hasCustomFields: !!post.custom_fields,
-    customFieldsCount: post.custom_fields?.length || 0,
-    customFields: post.custom_fields,
-    directLexicon: post.lexicon,
-    categories: post.categories
-  }, null, 2));
-
   // Extract lexicon from custom fields or direct parameter
   let lexiconParam = post.lexicon;
   if (!lexiconParam && post.custom_fields) {
@@ -75,17 +66,12 @@ async function handleNewPost(params: any[]) {
       field.key.toLowerCase() === 'lexicon'
     );
     lexiconParam = lexiconField?.value;
-    console.log('Found lexicon in custom fields:', lexiconParam);
   }
 
   // Determine lexicon from custom field, categories, or use default
   const lexicon = getLexiconFromPost(lexiconParam, post.categories);
   
-  console.log('Final lexicon determination:', {
-    lexiconParam,
-    categories: post.categories,
-    finalLexicon: lexicon
-  });
+  try {
 
   const blueskyPost = {
     title: post.title || 'Untitled Post',
@@ -98,6 +84,10 @@ async function handleNewPost(params: any[]) {
 
   const result = await publishToBluesky(handle, appPassword, blueskyPost);
   return result;
+  } catch (error) {
+    console.error('Error creating post:', error);
+    throw error;
+  }
 }
 
 async function handleEditPost(params: any[]) {
