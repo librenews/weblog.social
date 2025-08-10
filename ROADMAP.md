@@ -37,6 +37,14 @@ Transform weblog.social from a simple MetaWeblog-to-Bluesky bridge into a compre
   - AT Protocol native following for blogs/publications
   - Subscription management and notifications
 
+### Media & Content Features
+- [ ] **Media Upload Support** ⭐ **Priority**
+  - MetaWeblog API media upload endpoints (`metaWeblog.newMediaObject`)
+  - Support for images, videos, and document attachments
+  - Automatic image resizing and optimization
+  - CDN integration for fast media delivery
+  - Media library management and organization
+
 ---
 
 ## 🏗️ Phase 3: Web Platform Development
@@ -59,6 +67,19 @@ Transform weblog.social from a simple MetaWeblog-to-Bluesky bridge into a compre
   - Recent posts from followed blogs
   - Reading history and bookmarks
   - Post interaction (likes, shares, comments)
+
+### Custom Domains & Federation
+- [ ] **Custom Domain Support**
+  - CNAME subdomain pointing (e.g., `blog.yoursite.com` → `yourhandle.weblog.social`)
+  - SSL certificate automation for custom domains
+  - Domain verification and management
+  - Custom branding and theming per domain
+
+- [ ] **ActivityPub Integration**
+  - ActivityPub endpoints for custom domains
+  - Federation with Mastodon, Pleroma, and other ActivityPub networks
+  - Cross-platform mentions and interactions
+  - Followers/following synchronization between protocols
 
 ### Feed & Syndication
 - [ ] **RSS Feeds**
@@ -161,10 +182,13 @@ Transform weblog.social from a simple MetaWeblog-to-Bluesky bridge into a compre
 ## 🤝 Contributing
 
 ### Development Priorities
-1. **Lexicon Development**: Design and implement new AT Protocol lexicons
-2. **Web Interface**: Create intuitive user interfaces for content discovery
-3. **API Design**: Build robust APIs for third-party integrations
-4. **Documentation**: Comprehensive guides for users and developers
+1. **Media Upload Support**: MetaWeblog API compatibility with image/media handling ⭐
+2. **Lexicon Development**: Design and implement new AT Protocol lexicons
+3. **Custom Domain Infrastructure**: CNAME support and SSL automation
+4. **ActivityPub Integration**: Federation with existing decentralized networks
+5. **Web Interface**: Create intuitive user interfaces for content discovery
+6. **API Design**: Build robust APIs for third-party integrations
+7. **Documentation**: Comprehensive guides for users and developers
 
 ### Community Building
 - Developer documentation and tutorials
@@ -178,7 +202,10 @@ Transform weblog.social from a simple MetaWeblog-to-Bluesky bridge into a compre
 
 ### Technical Considerations
 - **AT Protocol Compliance**: Ensure all lexicons follow AT Protocol standards
-- **Backwards Compatibility**: Maintain MetaWeblog API support throughout evolution
+- **MetaWeblog API Compatibility**: Full support including media upload endpoints
+- **Custom Domain Infrastructure**: DNS management, SSL automation, subdomain routing
+- **Media Storage & CDN**: Scalable image/video hosting with optimization
+- **ActivityPub Federation**: Protocol bridge implementation for cross-network compatibility
 - **Performance**: Optimize for fast loading and responsive user experience
 - **Security**: Implement proper authentication, authorization, and data protection
 
