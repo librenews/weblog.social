@@ -103,6 +103,9 @@ async function handleGetPost(params: any[]) {
     throw new Error('Post ID, handle, and app password are required');
   }
 
+  console.log('Getting post with ID:', postId);
+  console.log('For user:', handle);
+
   try {
     const agent = new BskyAgent({ service: 'https://bsky.social' });
     await agent.login({ identifier: handle, password: appPassword });
@@ -111,28 +114,46 @@ async function handleGetPost(params: any[]) {
       throw new Error('Failed to authenticate with Bluesky');
     }
 
-    // Extract collection and record key from the post URI
+    // Parse AT Protocol URI: at://did:plc:xxx/collection/recordkey
     const postUri = postId;
-    const uriParts = postUri.split('/');
+    if (!postUri.startsWith('at://')) {
+      console.error('Invalid AT Protocol URI format:', postUri);
+      throw new Error('Invalid post URI format - must be AT Protocol URI');
+    }
+
+    // Split at:// URI: at://did:plc:xxx/collection/recordkey
+    const uriWithoutProtocol = postUri.slice(5); // Remove "at://"
+    const parts = uriWithoutProtocol.split('/');
     
-    if (uriParts.length < 2) {
-      throw new Error('Invalid post URI format');
+    if (parts.length < 3) {
+      console.error('AT Protocol URI has insufficient parts:', parts);
+      throw new Error('Invalid AT Protocol URI structure');
     }
     
-    const collection = uriParts[uriParts.length - 2]; // e.g., "app.bsky.feed.post" or "com.whtwnd.blog.entry"
-    const rkey = uriParts[uriParts.length - 1]; // The record key
+    const did = parts[0]; // did:plc:xxx
+    const collection = parts[1]; // e.g., "app.bsky.feed.post" or "com.whtwnd.blog.entry"
+    const rkey = parts[2]; // The record key
 
     if (!collection || !rkey) {
+      console.error('Failed to extract collection and rkey from URI:', postUri);
       throw new Error('Could not extract collection and record key from URI');
     }
 
-    console.log('Retrieving post from collection:', collection, 'with key:', rkey);
+    console.log('Parsed URI - DID:', did, 'Collection:', collection, 'RKey:', rkey);
+
+    // Verify the DID matches the authenticated user
+    if (did !== agent.session.did) {
+      console.error('DID mismatch - URI DID:', did, 'Session DID:', agent.session.did);
+      throw new Error('Post does not belong to authenticated user');
+    }
 
     const response = await agent.com.atproto.repo.getRecord({
       repo: agent.session.did,
       collection: collection,
       rkey: rkey,
     });
+
+    console.log('Successfully retrieved record:', response.data.uri);
 
     // The AT Protocol response structure has the record data in response.data.value
     const record = response.data.value as any;
@@ -141,23 +162,34 @@ async function handleGetPost(params: any[]) {
     if (collection === 'com.whtwnd.blog.entry') {
       // Whitewind blog entry
       return {
+        postid: postId,
         title: record.title || 'Untitled Post',
         description: record.content || '',
-        dateCreated: record.createdAt || new Date().toISOString(),
+        dateCreated: new Date(record.createdAt || Date.now()),
         categories: [],
+        custom_fields: [
+          { key: 'lexicon', value: 'whitewind' }
+        ]
       };
     } else {
       // Standard Bluesky post
       return {
+        postid: postId,
         title: record.title || 'Untitled Post',
         description: record.text || '',
-        dateCreated: record.createdAt || new Date().toISOString(),
+        dateCreated: new Date(record.createdAt || Date.now()),
         categories: record.tags || [],
       };
     }
   } catch (error) {
     console.error('Failed to retrieve post from Bluesky:', error);
-    throw new Error('Failed to retrieve post');
+    console.error('Error details:', {
+      postId,
+      handle,
+      errorMessage: error instanceof Error ? error.message : 'Unknown error',
+      errorStack: error instanceof Error ? error.stack : undefined
+    });
+    throw new Error(`Failed to retrieve post: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
